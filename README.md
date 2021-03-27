@@ -1,7 +1,7 @@
 ## chatbotHAL
 Prototipo de un ChatBOT de encuestas con Telegram y Django.
 
-Esta API se desarrolló, se probó, se documento y se publicó principalmente con los siguientes lenguajes y herramientas (algunas otras se especifican en el archivo requirements.txt):
+Este proyecto se desarrolló, se probó y se publicó principalmente con los siguientes lenguajes y herramientas (algunas otras se especifican en el archivo requirements.txt):
 
 - Python-3.9.2
 - Heroku
