@@ -135,7 +135,7 @@ class chatBotView(View):
             msg2 = "De momento no aplicas para nuestra encuesta de mercado \n Fin de la encusta\n"
 
             self.enviar_mensaje(msg2, chat)
-            self.guardar_info(chat,nombre,usuario,mercado4,text)
+            self.guardar_info(chat,nombre,usuario,mercado9,text)
 
         elif text == "SI" or text == "MUCHO":
            msg2 = "Teclea Coca para Coca-Cola 100\n Teclea L para Light\n"
