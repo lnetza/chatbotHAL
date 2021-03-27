@@ -18,7 +18,7 @@ Interactua con el bot 🤖 en Telegram buscalo como @halpollbot
 ### Getting Started
 Para implementar de manera local la aplicación, crear y configurar tu bot sigue los siguientes pasos:
 
-### Setupy 
+### Setup 
 
     # Clona el repositorio con la siguiente URL
     $ git clone https://github.com/lnetza/chatbotHAL.git
