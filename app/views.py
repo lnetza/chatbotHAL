@@ -83,7 +83,7 @@ class chatBotView(View):
         mercado8="¿De que compañia de telefonia era el cupón?"
         mercado9="¿Que tanto te gusto la pélicula de IT el PAYASO? "
 
-        social1="¿En categoría de edad, te encuentras?"
+        social1="¿En que categoría de edad, te encuentras?"
         social2="¿Cuál es tu clasificación en la universidad?"
         social3="Si tuviera que seguir otros estudios, ¿volverías a la universidad?"
 
