@@ -1,0 +1,52 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+
+<div class="col-md-12">
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+
+                <table class="table table-borderless table-dark" id="encuesta">
+                    <thead>
+                        <tr>
+                            <th>ID CHAT</th>
+                            <th>Nombre</th>
+                            <th>Usuario</th>
+                            <th>Pregunta</th>
+                            <th>Respuesta</th>
+                        </tr>
+                    </thead>
+                    {% if lista %}
+                    <tbody>
+                        {% for i in lista %}
+                        <tr>
+                            <td>{{i.id_chat}}</td>
+                            <td>{{i.nombre}}</td>
+                            <td>{{i.usuario}}</td>
+                            <td>{{i.pregunta}}</td>
+                            <td>{{i.respuesta}}</td>
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                    {% else %}
+                    No hay datos
+                    {% endif %}
+                </table>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
