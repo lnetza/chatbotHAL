@@ -1,5 +1,5 @@
 """
-Definition of models.
+Modelo que guarda la informaciòn obtenida del chatBOT
 """
 
 from django.db import models

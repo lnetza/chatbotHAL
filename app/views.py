@@ -1,5 +1,5 @@
 """
-Definition of views.
+Definiciòn de las vistas
 """
 
 from datetime import datetime
@@ -15,8 +15,14 @@ from django.http import JsonResponse
 from django.views import View
 from app.models import *
 
+from dotenv import load_dotenv
+load_dotenv()
+
+TELEGRAM_URL = "https://api.telegram.org/bot"
+BOT_TOKEN = os.getenv("TOKEN", "error_token")
+
 def home(request):
-    """Renders the home page."""
+    """Renderea a home."""
     assert isinstance(request, HttpRequest)
     return render(
         request,
@@ -27,41 +33,24 @@ def home(request):
         }
     )
 
-def contact(request):
-    """Renders the contact page."""
-    assert isinstance(request, HttpRequest)
-    return render(
-        request,
-        'app/contact.html',
-        {
-            'title':'Contact',
-            'message':'Your contact page.',
-            'year':datetime.now().year,
-        }
-    )
-
 def about(request):
-    """Renders the about page."""
+    """Renderea a about"""
     assert isinstance(request, HttpRequest)
     return render(
         request,
         'app/about.html',
         {
-            'title':'About',
-            'message':'Your application description page.',
+            
             'year':datetime.now().year,
         }
     )
 
 
-
-TELEGRAM_URL = "https://api.telegram.org/bot"
-TUTORIAL_BOT_TOKEN = os.getenv("TUTORIAL_BOT_TOKEN", "error_token")
-
-
-
-
 class chatBotView(View):
+    """Se definen las preguntas para encuestas de tipo mercado y encuestas de tipo social de manera estatica, se recolecta la
+    informaciòn del boot por medio de json.loads() para posteriormente extraer los valores con object notation, se invoca al
+    mètodo enviar_mensaje() para dar respuesta al usuario y guardar_info() para guardar en la base de datos"""
+
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
 
@@ -81,7 +70,7 @@ class chatBotView(View):
         mercado6="¿Que tan familiar se te hace la marca Doritos Sabritas?\n"
         mercado7="¿Que cupón de tiempo AIRE encontraste?"
         mercado8="¿De que compañia de telefonia era el cupón?"
-        mercado9="¿Que tanto te gusto la pélicula de IT el PAYASO? "
+        mercado9="¿Que tanto te gusto la pélicula de IT el PAYASO 🤡? "
 
         social1="¿En que categoría de edad, te encuentras?"
         social2="¿Cuál es tu clasificación en la universidad?"
@@ -131,18 +120,31 @@ class chatBotView(View):
             self.enviar_mensaje(msg2, chat)
             self.guardar_info(chat,nombre,usuario,mercado2,text)
         
-        elif text == "NO" or text == "POCO":
+        elif text == "POCO":
             msg2 = "De momento no aplicas para nuestra encuesta de mercado \n Fin de la encusta\n"
 
             self.enviar_mensaje(msg2, chat)
             self.guardar_info(chat,nombre,usuario,mercado9,text)
+        
+        elif text == "NO":
+            msg2 = "De momento no aplicas para nuestra encuesta de mercado \n Fin de la encusta\n"
 
-        elif text == "SI" or text == "MUCHO":
+            self.enviar_mensaje(msg2, chat)
+            self.guardar_info(chat,nombre,usuario,mercado6,text)
+        
+        elif text == "SI":
            msg2 = "Teclea Coca para Coca-Cola 100\n Teclea L para Light\n"
 
            self.enviar_mensaje(mercado3, chat)
            self.enviar_mensaje(msg2, chat)
            self.guardar_info(chat,nombre,usuario,mercado4,text)
+
+        elif text == "MUCHO":
+           msg2 = "Teclea Coca para Coca-Cola 100\n Teclea L para Light\n"
+
+           self.enviar_mensaje(mercado3, chat)
+           self.enviar_mensaje(msg2, chat)
+           self.guardar_info(chat,nombre,usuario,mercado9,text)
         
         elif text == "COCA" or text == "L":
            msg2 = " Si la conoces desde hace tiempo teclea OK\n Si no la conces teclea No\n"
@@ -200,7 +202,7 @@ class chatBotView(View):
             self.guardar_info(chat,nombre,usuario,social1,text)
         
         elif text == "PRIMERO" or text == "SEGUNDO":
-            msg2 = "Teclea x Probablemente si\n Tecle Z para Probablemente no\n Tecle B para Definitivamente no\n"
+            msg2 = "Teclea X Probablemente si\n Tecle Z para Probablemente no\n Teclea B para Definitivamente no\n"
             self.enviar_mensaje(social3, chat)
             self.enviar_mensaje(msg2, chat)
             self.guardar_info(chat,nombre,usuario,social2,text)
@@ -215,31 +217,28 @@ class chatBotView(View):
             self.enviar_mensaje(msg2,chat)
             self.guardar_info(chat,nombre,usuario,social3,text)
 
-        
-
         else:
 
             msg2 = "No conozco ese comando, escibre el comando /help para ayuda"
             self.enviar_mensaje(msg2,chat)
 
-
         return JsonResponse({"ok": "request processed"})
-    
-    
-    
+
     @staticmethod
     def enviar_mensaje(message, chat_id):
+        """Recibe como parametros el mensaje como pregunta y el chat_id del chat, para hacer una peticiòn post al endpoint
+        sendMessage especificando la url+tokeBot+data"""
         data = {
             "text": message,
             "chat_id": chat_id,
         }
         response = requests.post(
-            TELEGRAM_URL + "1626213109:AAEqqbqNaWbXXD2P4eaprwHP5xIPfowlifE/sendMessage?", data=data
+            TELEGRAM_URL + BOT_TOKEN + "/sendMessage?", data=data
         )
     
     @staticmethod
     def guardar_info(chat,nombre,usuario,pregunta,respuesta):
-        
+        """Recibe como parametros chat,nombre,usuario,pregunta,respuesta y se encarga de guardar esta informaciòn en la tabla encuestas"""
         encuesta = Encuestas()
         encuesta.id_chat    =chat
         encuesta.nombre     = nombre
@@ -249,7 +248,8 @@ class chatBotView(View):
         encuesta.save()
 
 def informacion_encuesta(request):
-    lista=Encuestas.objects.all()
+    """Se encarga de listar la informaciòn disponible en la tabla Encuestas y retornar la informaciòn a la plantilla encuestas.html"""
+    lista=Encuestas.objects.all().order_by('id_chat')
 
     ctx={'lista':lista}
     return render(request,'app/encuestas.html',ctx)
